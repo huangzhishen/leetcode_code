@@ -1,0 +1,77 @@
+class Solution {
+public:
+    bool Find(int target, vector<vector<int> > array) {
+       int i=0;
+        int liesize = array[0].size();
+        int hangsize = array.size();
+        bool result = false; 
+        if(array.empty())
+        {
+            return result;
+        }
+        while(i<array.size() && liesize>=1)
+        {
+            if(array[i][liesize-1] > target)
+            {
+                --liesize;
+                
+            }
+            else if (array[i][liesize-1] < target)
+            {
+                i++;
+            }
+            else
+            {
+                result = true; 
+                break;
+            }
+        }
+        return result;  
+    }
+};
+
+
+
+
+
+
+class Solution {
+public:
+	void replaceSpace(char *str,int length) {
+        if(str == NULL && length ==0)
+            return;
+        int i = 0;
+        vector<int> index;
+        while(str[i] != '\0')
+        {
+            if(str[i]==' ')
+            {
+                index.push_back(i);
+            }
+            ++i;
+        }
+        int size=index.size()-1;
+        int end = length-1;
+        int front= index[size];
+        int j =0;
+        int newlength=end+2*index.size();
+        while(size>=0)
+        {
+            for(j = end; j>front ;j--)
+            {
+                str[newlength--]=str[j];
+            }
+            str[newlength--]='0';
+            str[newlength--]='2';
+            str[newlength--]='%';
+            
+            --size;
+            if(size<0)
+            {
+                break;
+            }
+            end=front-1;
+            front=index[size];
+        }
+	}
+};

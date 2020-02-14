@@ -1,40 +1,36 @@
+技法：从前向后，从后向前（双指针）。
+
 class Solution {
 public:
-    bool Find(int target, vector<vector<int> > array) {
-       int i=0;
-        int liesize = array[0].size();
-        int hangsize = array.size();
-        bool result = false; 
-        if(array.empty())
+	void replaceSpace(char *str,int length) {
+        if(str == NULL && length ==0)
+            return;
+        int i = 0;
+        while(str[i] != '\0')
         {
-            return result;
+            if(str[i]==' ')
+            {
+                for(int j=length-1;j>i;j--)
+                {
+                    str[j+2]=str[j];
+                }
+                str[i]='%';
+                str[i+1]='2';
+                str[i+2]='0';
+            }
+            ++i;
         }
-        while(i<array.size() && liesize>=1)
-        {
-            if(array[i][liesize-1] > target)
-            {
-                --liesize;
-                
-            }
-            else if (array[i][liesize-1] < target)
-            {
-                i++;
-            }
-            else
-            {
-                result = true; 
-                break;
-            }
-        }
-        return result;  
-    }
+	}
 };
 
 
 
-
-
-
+第二个思路：
+我勒个去，这道题，我也是服气了，原来如此，我们的思路是一样的，但是我的做法存在一些问题：
+1、我的字符串移动是单独用一个for循环完成的。其实是可以一个一个字段操作的。
+2、没有使用新的数组长度进行移动。我是直接+2添加的。处理得当也是没问题的。哦哦，这样原来是不行的，为什么呢？因为从后往前，当有两个空格，则会覆盖。所以这道题是必须要利用上新数组长度值的。
+3、字符串问题的最后一个字符（“\0”）。这也是要移动的，不能忽视哦。
+4、我又用了一个vector去存空格的索引，其实这是没有必要的。但是问题也不大。我这个想的想法是：用空间换时间。不用一个个去遍历，直接跳到下一个空格的地方。
 class Solution {
 public:
 	void replaceSpace(char *str,int length) {
@@ -75,3 +71,39 @@ public:
         }
 	}
 };
+
+
+技法：左下角，右上角，具体带入分析。
+
+class Solution {
+public:
+    bool Find(int target, vector<vector<int> > array) {
+       int i=0;
+        int liesize = array[0].size();
+        int hangsize = array.size();
+        bool result = false; 
+        if(array.empty())
+        {
+            return result;
+        }
+        while(i<array.size() && liesize>=1)
+        {
+            if(array[i][liesize-1] > target)
+            {
+                --liesize;
+                
+            }
+            else if (array[i][liesize-1] < target)
+            {
+                i++;
+            }
+            else
+            {
+                result = true; 
+                break;
+            }
+        }
+        return result;  
+    }
+};
+

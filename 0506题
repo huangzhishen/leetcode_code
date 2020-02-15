@@ -1,0 +1,218 @@
+技法：从前向后，从后向前（双指针）。
+
+class Solution {
+public:
+	void replaceSpace(char *str,int length) {
+        if(str == NULL && length ==0)
+            return;
+        int i = 0;
+        while(str[i] != '\0')
+        {
+            if(str[i]==' ')
+            {
+                for(int j=length-1;j>i;j--)
+                {
+                    str[j+2]=str[j];
+                }
+                str[i]='%';
+                str[i+1]='2';
+                str[i+2]='0';
+            }
+            ++i;
+        }
+	}
+};
+
+
+第二个思路：
+我勒个去，这道题，我也是服气了，原来如此，我们的思路是一样的，但是我的做法存在一些问题：
+1、我的字符串移动是单独用一个for循环完成的。其实是可以一个一个字段操作的。
+2、没有使用新的数组长度进行移动。我是直接+2添加的。处理得当也是没问题的。哦哦，这样原来是不行的，为什么呢？因为从后往前，当有两个空格，则会覆盖。所以这道题是必须要利用上新数组长度值的。
+3、字符串问题的最后一个字符（“\0”）。这也是要移动的，不能忽视哦。
+4、我又用了一个vector去存空格的索引，其实这是没有必要的。但是问题也不大。我这个想的想法是：用空间换时间。不用一个个去遍历，直接跳到下一个空格的地方。
+class Solution {
+public:
+	void replaceSpace(char *str,int length) {
+        if(str == NULL && length ==0)
+            return;
+        int i = 0;
+        vector<int> index;
+        while(str[i] != '\0')
+        {
+            if(str[i]==' ')
+            {
+                index.push_back(i);
+            }
+            ++i;
+        }
+        int size=index.size()-1;
+        int end = length-1;
+        int front= index[size];
+        int j =0;
+        int newlength=end+2*index.size();
+        while(size>=0)
+        {
+            for(j = end; j>front ;j--)
+            {
+                str[newlength--]=str[j];
+            }
+            str[newlength--]='0';
+            str[newlength--]='2';
+            str[newlength--]='%';
+            
+            --size;
+            if(size<0)
+            {
+                break;
+            }
+            end=front-1;
+            front=index[size];
+        }
+	}
+};
+
+
+
+
+
+
+今日第二题：头插法实现从尾到头的打印。
+
+递归与迭代！递归是从后向前，迭代是从前向后。
+递归的算法一般都是可以用循环的方式完成的，而这种循环我们称为迭代。
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+
+   if (head == nullptr || head->next == nullptr) 
+        return head;
+    ListNode* cur = head;
+    ListNode* newpNode = NULL;
+    ListNode* pre= NULL;
+    while(cur)
+    {
+        //ListNode* temp= cur->next;
+        //newpNode = cur;
+        //newpNode->next=pre;
+        //pre = cur;
+        //cur=temp;
+
+        newpNode= cur->next;
+        cur->next=pre;
+        pre = cur;
+        cur= newpNode;
+    }
+    return pre;
+    }
+};
+
+
+搞了半天，总算知道我在哪里出问题了，原来我：
+newpNode =cur;
+newpNode->next=pre;
+这一步就改变了原链表的结构了，所以底下的：
+cur=cur->next;无效
+
+我的方法用了四个指针变量，我看还有的方法只用了三个指针！
+答案：其实，我发现了，pre指针指的，就是最新的那个翻转后的链表。这样的话，头插法，只需要先把当前值的下一个设为pre（pre初始值为NULL），再把pre设置成当前值。
+
+
+
+
+其实这种方法，有一个小小问题，不能统一化，所以在代码的开头，对于只有一个元素的链表要特殊处理，这样代码就还有优化的空间。
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+
+    ListNode* cur = head;
+    ListNode* newpNode = NULL;
+    ListNode* pre= NULL;
+    while(cur)
+    {
+        newpNode= cur->next;
+        cur->next=pre;
+        pre = cur;
+        cur= newpNode;
+    }
+    return pre;
+    }
+};
+
+
+
+
+
+原来还有一类的头插法（这类是最普适的），本质还是翻转后连上原来的链表！：
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+
+    if(head==NULL || head->next==NULL)
+    {
+        return head;
+    }
+    ListNode* pre= head;
+   ListNode* cur = pre->next;
+ 
+    while(cur)
+    {
+        pre->next= cur->next;
+        cur->next=head;
+        head=cur;
+        cur=pre->next;
+    }
+    return head;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+继续往下走，研究一下递归的做法：
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+
+    if (head == NULL || head->next == NULL) 
+        return head;
+        
+        ListNode* p = reverseList(head->next); //链表最后一个节点，eg 1->2->4->6,即6
+        head->next->next = head; //head为4，此处实现6->4
+        head->next = NULL;// 断掉4->6
+        
+        return p;
+    }
+};
+
+
+这个尾递归真的很牛逼！
+这里递归函数的参数很关键：head->next。
+这个返回值有什么用呢？p是head，返回p，就是返回head，回溯到最后
+
+
+

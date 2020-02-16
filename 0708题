@@ -1,0 +1,80 @@
+重建二叉树：
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        if(preorder.empty() || inorder.empty())
+        {
+            return NULL;
+        }
+        return ConstructTree(preorder,inorder,0,preorder.size()-1,0,inorder.size()-1);
+    }
+
+    TreeNode* ConstructTree(vector<int>& preorder,vector<int>& inorder,int i,int j,int m,int n)
+    {
+        int root=preorder[i];
+        int istart=m;
+        while(istart!=n)
+        {
+            if(inorder[istart]==root)
+            {
+                break;
+            }
+            ++istart;
+        }
+        TreeNode* node= new TreeNode(root);  
+
+        int leftlength= istart-m;
+        int rightlength= n-istart;
+
+        if(leftlength)
+        {
+             node->left=ConstructTree(preorder,inorder,i+1,i+istart,m,m+leftlength-1);
+        }
+       
+       if(rightlength)
+        node->right=ConstructTree(preorder,inorder,i+leftlength+1,j,m+leftlength+1,n);
+        
+        
+        return node;
+    }
+};
+
+
+
+
+
+
+
+两个栈实现队列：
+class Solution
+{
+public:
+    void push(int node) {
+           while(!stack2.empty())
+           {
+               int s2=stack2.top();
+               stack2.pop();
+               stack1.push(s2);
+           }
+      
+            stack1.push(node);
+        
+    }
+
+    int pop() 
+    {
+        while(!stack1.empty())
+        {
+               int s1=stack1.top();
+               stack1.pop();
+               stack2.push(s1);
+        }
+        int temp=stack2.top();
+        stack2.pop();
+        return temp;
+    }
+
+private:
+    stack<int> stack1;
+    stack<int> stack2;
+};
